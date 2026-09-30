@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Budget Planner - PocketSmart</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">PocketSmart</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/history">History</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <section class="planner-container">
+       <h1>&#127968; Home Interior Budget Planner</h1>
+        <p style="margin-bottom: 1.5rem;">Tell us your budget and requirements — our AI will suggest furniture, lighting, and decor that fit.</p>
+
+        <form id="homeForm">
+            <label>Total Budget (Rs)</label>
+            <input type="number" name="total_budget" required min="1000" placeholder="e.g., 50000">
+
+            <label>Number of Lights</label>
+            <input type="number" name="num_lights" value="0" min="0">
+
+            <label>Number of Ceiling Fans</label>
+            <input type="number" name="num_fans" value="0" min="0">
+
+            <label>Number of Furniture Pieces</label>
+            <input type="number" name="num_furniture" value="0" min="0">
+
+            <label>Number of Dining Tables</label>
+            <input type="number" name="num_dining_tables" value="0" min="0">
+
+            <label style="margin-top: 1rem;">
+                <input type="checkbox" name="has_living_room"> Include Living Room
+            </label>
+            <label>
+                <input type="checkbox" name="has_kitchen"> Include Kitchen
+            </label>
+            <label>
+                <input type="checkbox" name="has_bedroom"> Include Bedroom
+            </label>
+
+            <label style="margin-top: 1rem;">Additional Requirements</label>
+            <textarea name="additional_requirements" rows="3" placeholder="e.g., modern style, wooden theme"></textarea>
+
+            <button type="submit" class="btn-primary">Get Recommendations</button>
+        </form>
+
+        <div id="result"></div>
+    </section>
+
+    <script>
+        document.getElementById('homeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const payload = {
+                total_budget: parseFloat(formData.get('total_budget')),
+                num_lights: parseInt(formData.get('num_lights') || 0),
+                num_fans: parseInt(formData.get('num_fans') || 0),
+                num_furniture: parseInt(formData.get('num_furniture') || 0),
+                num_dining_tables: parseInt(formData.get('num_dining_tables') || 0),
+                has_living_room: formData.get('has_living_room') === 'on',
+                has_kitchen: formData.get('has_kitchen') === 'on',
+                has_bedroom: formData.get('has_bedroom') === 'on',
+                additional_requirements: formData.get('additional_requirements') || null,
+            };
+
+            document.getElementById('result').innerHTML = '<p>? Generating recommendations... (may take 10-15 seconds)</p>';
+
+            try {
+                const res = await fetch('/home-budget', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+                renderHomeResults(data);
+            } catch (err) {
+                document.getElementById('result').innerHTML =
+                    `<p class="error">Error: ${err.message}</p>`;
+            }
+        });
+
+        function renderHomeResults(data) {
+            if (data.error) {
+                document.getElementById('result').innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                return;
+            }
+            let html = `<h2>Your Personalized Budget Plan</h2>
+                <p><strong>Total Budget:</strong> Rs ${data.total_budget}</p>
+                <p><strong>Remaining:</strong> Rs ${data.remaining_budget || 0}</p>`;
+
+            (data.budget_breakdown || []).forEach(cat => {
+                html += `<div class="category-block"><h3>${cat.category}</h3>
+                         <p>Allocation: Rs ${cat.allocation}</p><ul>`;
+                (cat.items || []).forEach(item => {
+                    html += `<li><strong>${item.name}</strong> - Rs ${item.estimated_price} x ${item.quantity}<br>
+                             <small>${item.description}</small><br>`;
+                    if (item.shopping_links) {
+                        Object.entries(item.shopping_links).forEach(([k, v]) => {
+                            html += `<a href="${v}" target="_blank">${k}</a> `;
+                        });
+                    }
+                    html += `</li>`;
+                });
+                html += `</ul></div>`;
+            });
+
+            if (data.additional_suggestions && data.additional_suggestions.length) {
+                html += `<div class="suggestions"><h3>Additional Suggestions</h3><ul>`;
+                data.additional_suggestions.forEach(s => html += `<li>${s}</li>`);
+                html += `</ul></div>`;
+            }
+
+            document.getElementById('result').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

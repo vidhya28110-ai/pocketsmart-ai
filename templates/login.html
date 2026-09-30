@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PocketSmart</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">PocketSmart</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/register">Register</a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <h1>Welcome Back</h1>
+        {% if error %}
+        <p class="error" style="text-align:center; margin-bottom:1rem;">{{ error }}</p>
+        {% endif %}
+        <form action="/login" method="post">
+            <label>Username</label>
+            <input type="text" name="username" required placeholder="Enter your username">
+
+            <label>Password</label>
+            <input type="password" name="password" required placeholder="Enter your password">
+
+            <button type="submit" class="btn-primary">Sign In</button>
+        </form>
+        <p>Don't have an account? <a href="/register">Create Account</a></p>
+    </div>
+</body>
+</html>

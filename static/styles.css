@@ -1,0 +1,113 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+body { background: #f5f7fa; color: #1e293b; line-height: 1.6; }
+
+/* NAVBAR */
+.navbar {
+    background: #1e3a8a; color: white; padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.logo { font-size: 1.5rem; font-weight: bold; }
+.nav-links a { color: white; text-decoration: none; margin-left: 1.5rem; }
+.nav-links a:hover { text-decoration: underline; }
+
+/* HERO */
+.hero {
+    text-align: center; padding: 4rem 2rem;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+}
+.hero h1 { font-size: 3rem; margin-bottom: 0.5rem; }
+.hero h2 { font-size: 1.8rem; margin-bottom: 1rem; }
+.hero p { max-width: 700px; margin: 0 auto 2rem; }
+
+/* BUTTONS */
+.btn-primary, .btn-secondary {
+    display: inline-block; padding: 0.75rem 1.5rem; border-radius: 8px;
+    text-decoration: none; font-weight: bold; cursor: pointer; border: none;
+    transition: all 0.3s;
+}
+.btn-primary { background: #1e3a8a; color: white; }
+.btn-primary:hover { background: #1e40af; }
+.btn-secondary { background: white; color: #1e3a8a; }
+
+/* FEATURES */
+.features { padding: 4rem 2rem; text-align: center; }
+.features h2 { margin-bottom: 2rem; font-size: 2rem; }
+.feature-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem; max-width: 1200px; margin: 0 auto;
+}
+.feature-card {
+    background: white; padding: 2rem; border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.3s;
+}
+.feature-card:hover { transform: translateY(-5px); }
+.feature-card .icon { font-size: 3rem; margin-bottom: 1rem; }
+.feature-card h3 { margin-bottom: 1rem; color: #1e3a8a; }
+
+/* AUTH FORMS */
+.auth-container {
+    max-width: 400px; margin: 4rem auto; background: white;
+    padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.auth-container h1 { text-align: center; margin-bottom: 1.5rem; color: #1e3a8a; }
+.auth-container label { display: block; margin-top: 1rem; font-weight: 600; }
+.auth-container input {
+    width: 100%; padding: 0.75rem; margin-top: 0.3rem;
+    border: 1px solid #cbd5e1; border-radius: 8px;
+}
+.auth-container button { width: 100%; margin-top: 1.5rem; }
+.auth-container p { text-align: center; margin-top: 1rem; }
+.auth-container a { color: #1e3a8a; }
+
+/* PLANNER */
+.planner-container { max-width: 900px; margin: 2rem auto; padding: 2rem; }
+.planner-container h1 { color: #1e3a8a; margin-bottom: 1.5rem; }
+.planner-container form {
+    background: white; padding: 2rem; border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 2rem;
+}
+.planner-container label { display: block; margin-top: 1rem; font-weight: 600; }
+.planner-container input, .planner-container select, .planner-container textarea {
+    width: 100%; padding: 0.75rem; margin-top: 0.3rem;
+    border: 1px solid #cbd5e1; border-radius: 8px;
+}
+.planner-container form button { margin-top: 1.5rem; }
+
+/* RESULTS */
+.category-block {
+    background: white; padding: 1.5rem; border-radius: 10px;
+    margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.category-block h3 { color: #1e3a8a; margin-bottom: 0.5rem; }
+.category-block ul { list-style: none; margin-top: 1rem; }
+.category-block li {
+    padding: 1rem; border-bottom: 1px solid #e2e8f0;
+}
+.category-block li a {
+    display: inline-block; margin-right: 0.5rem; margin-top: 0.5rem;
+    padding: 0.25rem 0.75rem; background: #eff6ff; color: #1e3a8a;
+    border-radius: 6px; text-decoration: none; font-size: 0.85rem;
+}
+.suggestions {
+    background: #fef3c7; padding: 1.5rem; border-radius: 10px;
+}
+.error { color: #dc2626; font-weight: bold; }
+
+/* DASHBOARD */
+.dashboard { max-width: 1200px; margin: 2rem auto; padding: 2rem; }
+.dashboard h1 { color: #1e3a8a; margin-bottom: 0.5rem; }
+.dashboard .feature-grid { margin-top: 2rem; }
+
+/* HISTORY */
+.history-container { max-width: 900px; margin: 2rem auto; padding: 2rem; }
+.history-card {
+    background: white; padding: 1.5rem; border-radius: 10px;
+    margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* FOOTER */
+footer {
+    text-align: center; padding: 2rem; background: #1e3a8a;
+    color: white; margin-top: 4rem;
+}

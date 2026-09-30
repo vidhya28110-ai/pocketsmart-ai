@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - PocketSmart</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">PocketSmart</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/history">History</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <section class="history-container">
+        <h1>&#128203;Recommendation History</h1>
+        <p style="margin-bottom: 1.5rem;">Review your past recommendation queries and results.</p>
+
+        {% if history %}
+            {% for item in history %}
+            <div class="history-card">
+                <h3>
+                    {% if item.type == 'home' %}&#127968;
+                    {% elif item.type == 'party' %}&#127881;
+                    {% elif item.type == 'jewelry' %}&#128142;
+                    {% endif %}
+                    {{ item.type|capitalize }} Budget Plan
+                </h3>
+                <p style="color:#64748b; font-size:0.9rem; margin-top:0.25rem;">
+                    {{ item.timestamp }}
+                </p>
+                <p style="margin-top:0.5rem;">
+                    <strong>Budget:</strong> Rs {{ item.input.total_budget }}
+                </p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="history-card">
+                <p>No history yet. Start planning by choosing a planner from the dashboard!</p>
+            </div>
+        {% endif %}
+    </section>
+
+    <footer>
+        <p>© 2025 PocketSmart. All rights reserved.</p>
+    </footer>
+</body>
+</html>

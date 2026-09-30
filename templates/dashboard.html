@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - PocketSmart</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">PocketSmart</div>
+        <div class="nav-links">
+            <a href="/dashboard">Home</a>
+            <a href="/history">History</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <section class="dashboard">
+        <h1>Welcome, {{ user.username }}!</h1>
+        <p>Choose a budget planner to get started with your personalized financial planning experience.</p>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">&#127968;</div>
+                <h3>Home Budget Planner</h3>
+                <p>Plan your interior design budget efficiently with AI-powered recommendations for furniture, lighting, and more.</p>
+                <a href="/home-planner" class="btn-primary" style="margin-top:1rem; display:inline-block;">Get Started</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">&#127881;</div>
+                <h3>Party Budget Planner</h3>
+                <p>Plan your perfect event with budget allocations for venue, catering, decorations, and entertainment.</p>
+                <a href="/party-planner" class="btn-primary" style="margin-top:1rem; display:inline-block;">Get Started</a>
+            </div>
+
+            <div class="feature-card">
+               <div class="icon">&#128142;</div>
+                <h3>Jewelry Budget Planner</h3>
+                <p>Find the ideal jewelry pieces for any occasion that match your outfit and stay within your budget.</p>
+                <a href="/jewelry-planner" class="btn-primary" style="margin-top:1rem; display:inline-block;">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 PocketSmart. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Budget Planner - PocketSmart</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">PocketSmart</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/history">History</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <section class="planner-container">
+        <h1>&#127881; Party Budget Planner</h1>
+        <p style="margin-bottom: 1.5rem;">Tell us about your event — our AI will suggest venue, catering, decoration, and more within your budget.</p>
+
+        <form id="partyForm">
+            <label>Total Budget (Rs)</label>
+            <input type="number" name="total_budget" required min="500" placeholder="e.g., 25000">
+
+            <label>Party Type</label>
+            <select name="party_type" required>
+                <option value="Birthday">Birthday</option>
+                <option value="Wedding">Wedding</option>
+                <option value="Corporate">Corporate</option>
+                <option value="Anniversary">Anniversary</option>
+                <option value="Housewarming">Housewarming</option>
+            </select>
+
+            <label>Number of Guests</label>
+            <input type="number" name="num_guests" required min="1" placeholder="e.g., 30">
+
+            <label>Venue Type (optional)</label>
+            <input type="text" name="venue_type" placeholder="Home / Hotel / Banquet / Outdoor">
+
+            <label style="margin-top: 1rem;">
+                <input type="checkbox" name="needs_catering" checked> Need Catering
+            </label>
+            <label>
+                <input type="checkbox" name="needs_decoration" checked> Need Decoration
+            </label>
+            <label>
+                <input type="checkbox" name="needs_entertainment" checked> Need Entertainment
+            </label>
+
+            <label style="margin-top: 1rem;">Additional Requirements</label>
+            <textarea name="additional_requirements" rows="3" placeholder="e.g., vegetarian menu, DJ, themed decor"></textarea>
+
+            <button type="submit" class="btn-primary">Get Recommendations</button>
+        </form>
+
+        <div id="result"></div>
+    </section>
+
+    <script>
+        document.getElementById('partyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const payload = {
+                total_budget: parseFloat(formData.get('total_budget')),
+                party_type: formData.get('party_type'),
+                num_guests: parseInt(formData.get('num_guests')),
+                venue_type: formData.get('venue_type') || null,
+                needs_catering: formData.get('needs_catering') === 'on',
+                needs_decoration: formData.get('needs_decoration') === 'on',
+                needs_entertainment: formData.get('needs_entertainment') === 'on',
+                additional_requirements: formData.get('additional_requirements') || null,
+            };
+
+            document.getElementById('result').innerHTML = '<p>? Generating recommendations... (may take 10-15 seconds)</p>';
+
+            try {
+                const res = await fetch('/party-budget', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+                renderPartyResults(data);
+            } catch (err) {
+                document.getElementById('result').innerHTML =
+                    `<p class="error">Error: ${err.message}</p>`;
+            }
+        });
+
+        function renderPartyResults(data) {
+            if (data.error) {
+                document.getElementById('result').innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                return;
+            }
+            let html = `<h2>Your Party Budget Plan</h2>
+                <p><strong>Total Budget:</strong> Rs ${data.total_budget}</p>
+                <p><strong>Remaining:</strong> Rs ${data.remaining_budget || 0}</p>`;
+
+            (data.budget_breakdown || []).forEach(cat => {
+                html += `<div class="category-block"><h3>${cat.category}</h3>
+                         <p>Allocation: Rs ${cat.allocation}</p><ul>`;
+                (cat.items || []).forEach(item => {
+                    html += `<li><strong>${item.name}</strong> - Rs ${item.estimated_price} x ${item.quantity}<br>
+                             <small>${item.description}</small><br>`;
+                    if (item.shopping_links) {
+                        Object.entries(item.shopping_links).forEach(([k, v]) => {
+                            html += `<a href="${v}" target="_blank">${k}</a> `;
+                        });
+                    }
+                    html += `</li>`;
+                });
+                html += `</ul></div>`;
+            });
+
+            if (data.venue_suggestions && data.venue_suggestions.length) {
+                html += `<div class="category-block"><h3>Venue Suggestions</h3><ul>`;
+                data.venue_suggestions.forEach(v => {
+                    html += `<li><strong>${v.name}</strong> (${v.type || 'N/A'})<br>
+                             Capacity: ${v.capacity || 'N/A'} | Cost: Rs ${v.estimated_cost || 0}<br>`;
+                    if (v.search_links) {
+                        Object.entries(v.search_links).forEach(([k, link]) => {
+                            html += `<a href="${link}" target="_blank">${k}</a> `;
+                        });
+                    }
+                    html += `</li>`;
+                });
+                html += `</ul></div>`;
+            }
+
+            if (data.additional_suggestions && data.additional_suggestions.length) {
+                html += `<div class="suggestions"><h3>Additional Suggestions</h3><ul>`;
+                data.additional_suggestions.forEach(s => html += `<li>${s}</li>`);
+                html += `</ul></div>`;
+            }
+
+            document.getElementById('result').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

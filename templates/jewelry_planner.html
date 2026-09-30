@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jewelry Budget Planner - PocketSmart</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">PocketSmart</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/history">History</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <section class="planner-container">
+        <h1>&#128142; Jewelry Budget Planner</h1>
+        <p style="margin-bottom: 1.5rem;">Enter your budget and occasion. Optionally upload your outfit image — AI will match jewelry to your look.</p>
+
+        <form id="jewelryForm" enctype="multipart/form-data">
+            <label>Total Budget (Rs)</label>
+            <input type="number" name="total_budget" required min="500" placeholder="e.g., 15000">
+
+            <label>Occasion</label>
+            <select name="occasion" required>
+                <option value="Wedding">Wedding</option>
+                <option value="Birthday">Birthday</option>
+                <option value="Anniversary">Anniversary</option>
+                <option value="Casual">Casual</option>
+                <option value="Festival">Festival</option>
+                <option value="Party">Party</option>
+            </select>
+
+            <label>Style Preferences (optional)</label>
+            <textarea name="preferences" rows="3" placeholder="e.g., minimalist gold, traditional kundan, silver-toned"></textarea>
+
+            <label style="margin-top: 1rem;">Upload Outfit Image (Optional)</label>
+            <input type="file" name="outfit_image" accept="image/*">
+
+            <button type="submit" class="btn-primary">Get Recommendations</button>
+        </form>
+
+        <div id="result"></div>
+    </section>
+
+    <script>
+        document.getElementById('jewelryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            document.getElementById('result').innerHTML = '<p>? Analyzing... (may take 10-20 seconds)</p>';
+
+            try {
+                const res = await fetch('/jewelry-budget', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await res.json();
+                renderJewelryResults(data);
+            } catch (err) {
+                document.getElementById('result').innerHTML =
+                    `<p class="error">Error: ${err.message}</p>`;
+            }
+        });
+
+        function renderJewelryResults(data) {
+            if (data.error) {
+                document.getElementById('result').innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                return;
+            }
+            let html = `<h2>Your Jewelry Recommendations</h2>
+                <p><strong>Total Budget:</strong> Rs ${data.total_budget}</p>
+                <p><strong>Remaining:</strong> Rs ${data.remaining_budget || 0}</p>`;
+
+            if (data.outfit_analysis) {
+                html += `<div class="category-block"><h3>Outfit Analysis</h3>
+                    <p>Colors: ${(data.outfit_analysis.colors || []).join(', ') || 'N/A'}</p>
+                    <p>Style: ${data.outfit_analysis.style || 'N/A'}</p>
+                    <p>Formality: ${data.outfit_analysis.formality || 'N/A'}</p>
+                </div>`;
+            }
+
+            html += `<h3 style="margin-top:1.5rem; color:#1e3a8a;">Jewelry Recommendations</h3>`;
+
+            (data.jewelry_recommendations || []).forEach(item => {
+                html += `<div class="category-block">
+                    <h4>${item.item_type || 'Item'}</h4>
+                    <p>${item.description || ''}</p>
+                    <p><strong>Rs ${item.estimated_price || 0}</strong> | Style: ${item.style || 'N/A'}</p>`;
+                if (item.shopping_links) {
+                    Object.entries(item.shopping_links).forEach(([k, v]) => {
+                        html += `<a href="${v}" target="_blank">${k}</a> `;
+                    });
+                }
+                html += `</div>`;
+            });
+
+            if (data.styling_tips && data.styling_tips.length) {
+                html += `<div class="suggestions"><h3>Styling Tips</h3><ul>`;
+                data.styling_tips.forEach(t => html += `<li>${t}</li>`);
+                html += `</ul></div>`;
+            }
+
+            document.getElementById('result').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
